@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+
+{% block page_content %}
+<div class="container">
+ 
+  <p>clientes por producto:</p>            
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Codigo</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+      </tr>
+    </thead>
+    <tbody>{{ producto }}
+    {% for j in farma %}
+        {% if producto == j["PRODUCTO"] %}
+          <tr>
+            <td>{{ j["CLIENTE"] }}</td>
+            <td>{{ j["CODIGO"] }}</td>
+            <td>{{ j["PRODUCTO"] }}</td>
+            <td>{{ j["CANTIDAD"] }}</td>
+            <td>{{ j["PRECIO"] }}</td>       
+          </tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
