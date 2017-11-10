@@ -21,24 +21,51 @@ def mayorganancia(archicsv):
     with open(archicsv,'r', encoding='latin-1') as archivo:
         archivo_csv = csv.DictReader(archivo)
         farmase = list(archivo_csv)
-        listado = []        
-        dicta = []
+        listado = []
+                
+        dicta = [] 
         
         for t in farmase:
             if t["CLIENTE"] not in listado: 
                 listado.append(t["CLIENTE"])
+        
                 
         for p in range(len(listado)):
             
-            dicta.append(listado[p],0])
+            dicta.append([listado[p],0])
         for c in farmase:
             for z in range(len(listado)):
                 if c["CLIENTE"] == listado[z]:
                     precio = dicta[z][1]
-                   # unidades = 1
-                    #valor = 3
+                    unidades = float(c["CANTIDAD"]) 
+                    valor = float(c["PRECIO"])
                     precio += valor * unidades
                     dicta[z][1] = precio
-               
+        dicta.sort(key=lambda x:x[1], reverse=True)
+             
         return dicta
-
+def mejorproducto(archicsv):
+    with open(archicsv,'r', encoding='latin-1') as archivo:
+        archivo_csv = csv.DictReader(archivo)
+        farmase = list(archivo_csv)
+        listado = []
+        dictado = []       
+        lista3 = []
+        
+        for t in farmase:
+            if t["PRODUCTO"] not in listado: 
+                listado.append(t["PRODUCTO"])
+                dictado.append(t["CODIGO"])
+        for p in range(len(listado)):
+            
+            lista3.append([listado[p],dictado[p],0])       
+        
+        for c in farmase:
+            for z in range(len(listado)):
+                if c["PRODUCTO"] == lista3[z][0]:
+                    cantidad = lista3[z][2]
+                    unidades = float(c["CANTIDAD"])                     
+                    cantidad += unidades
+                    lista3[z][2] = cantidad
+        lista3.sort(key=lambda x:x[2], reverse=True)
+        return lista3

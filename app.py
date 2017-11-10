@@ -116,7 +116,10 @@ def mayorpostor():
     farmas = consulta.mayorganancia("farmacia",)
     return render_template('mayorpostor.html', farma=farmas)
 
-
+@app.route('/mejorproducto')
+def mejorproducto():
+    farmas = consulta.mejorproducto("farmacia",)
+    return render_template('mejorproducto.html', farma=farmas)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

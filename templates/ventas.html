@@ -3,7 +3,7 @@
 {% block title %}ventas{% endblock %}
 
 {% block page_content %}
-<<div class="container">
+<div class="container">
              
   <table class="table table-striped">
     <thead>
@@ -16,14 +16,15 @@
       </tr>
     </thead>
     <tbody>
-    {% for j in farma %}
+          
+    {% for f in farma %}
           <tr>
-            <td>{{ j["CLIENTE"] }}</td>
-            <td>{{ j["CODIGO"] }}</td>
-            <td>{{ j["PRODUCTO"] }}</td>
-            <td>{{ j["CANTIDAD"] }}</td>
-            <td>{{ j["PRECIO"] }}</td>
-
+            <td>{{ f["CLIENTE"] }}</td>
+            <td>{{ f["CODIGO"] }}</td>
+            <td>{{ f["PRODUCTO"] }}</td>
+            <td>{{ f["CANTIDAD"] }}</td>
+            <td>{{ f["PRECIO"] }}</td>
+            
            
           </tr>
     {% endfor %}

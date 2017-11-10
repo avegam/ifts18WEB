@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}mejores clientes{% endblock %}
+{% block title %}producto mas vendidor{% endblock %}
 
 {% block page_content %}
 <div class="container">
@@ -8,9 +8,9 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Cliente</th>
-        <th>dinero</th>
-        
+        <th>producto</th>
+        <th>codigo</th>
+        <th>cantidad</th>
       </tr>
     </thead>
     <tbody>         
@@ -19,7 +19,8 @@
         
           <tr>
             <td>{{ farma[j][0] }}</td>
-            <td>{{ farma[j][1]|round }}</td>
+            <td>{{ farma[j][1] }}</td>
+            <td>{{ farma[j][2] }}</td>
            
           </tr>
     {% endfor %}
