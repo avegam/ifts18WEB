@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}producto mas vendidor{% endblock %}
+
+{% block page_content %}
+<div class="container">
+           
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>asd</th>
+        
+      </tr>
+    </thead>
+    <tbody>         
+    <ul>
+    {% for j in range(farma|length) %}
+          <li><a href="/clientesxproducto/{{ farma[j] }}">{{ farma[j] }}</a></li>
+    {% endfor %}
+</ul>
+    
+    
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -85,26 +85,14 @@ def ventas():
           
     return render_template('ventas.html',farma = farmas)
 
-@app.route('/listadocliexpro', methods=['GET', 'POST'])
-def listar():
-    formulario = ListarForm()
-    if formulario.validate_on_submit():
-        print(formulario.usuario.name)
-        return redirect(url_for('clientesxproducto', usuario=formulario.usuario.data))
-    return render_template('listadocliexpro.html', form=formulario)
+
 
 @app.route('/clientesxproducto/<cliente>')
 def clientesxproducto(cliente):
     farmas = consulta.Todo("farmacia",)
     return render_template('clientesxproducto.html', cliente=cliente, farma=farmas)
 
-@app.route('/listadocliexpro', methods=['GET', 'POST'])
-def listarotro():
-    formulario = ListarForm()
-    if formulario.validate_on_submit():
-        print(formulario.usuario.name)
-        return redirect(url_for('clientesxproducto', usuario=formulario.usuario.data))
-    return render_template('listadocliexpro.html', form=formulario)
+
 
 @app.route('/productoxclientes/<producto>')
 def productoxclientes(producto):
@@ -120,6 +108,33 @@ def mayorpostor():
 def mejorproducto():
     farmas = consulta.mejorproducto("farmacia",)
     return render_template('mejorproducto.html', farma=farmas)
+
+@app.route('/busqueda/<segmen>')
+def busqueda(segmen):
+    farmas = consulta.busqueda("farmacia",segmen,)
+    return render_template('busqueda.html', farma=farmas)
+
+@app.route('/busqueda', methods=['GET', 'POST'])
+def saludar():
+    formulario = ListarForm()
+    if formulario.validate_on_submit():
+        print(formulario.usuario.name)
+        return redirect(url_for('busqueda', segmen=formulario.usuario.data))
+    return render_template('usuarios.html', form=formulario)
+
+@app.route('/busquedacliente/<segmen>')
+def busquedacliente(segmen):
+    farmas = consulta.busquedacliente("farmacia",segmen,)
+    return render_template('busquedacliente.html', farma=farmas)
+
+@app.route('/busquedacliente', methods=['GET', 'POST'])
+def saludart():
+    formulario = ListarForm()
+    if formulario.validate_on_submit():
+        print(formulario.usuario.name)
+        return redirect(url_for('busquedacliente', segmen=formulario.usuario.data))
+    return render_template('usuarios.html', form=formulario)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
