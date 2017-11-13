@@ -8,22 +8,23 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Cliente</th>
-        <th>Codigo</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio</th>
+        <th>{{ orden[0] }}</th>
+        <th>{{ orden[1] }}</th>
+        <th>{{ orden[2] }}</th>
+        <th>{{ orden[3] }}</th>
+        <th>{{ orden[4] }}</th>
+
       </tr>
     </thead>
     <tbody>
           
-    {% for f in farma %}
+    {% for f in range(farma|length) %}
           <tr>
-            <td>{{ f["CLIENTE"] }}</td>
-            <td>{{ f["CODIGO"] }}</td>
-            <td>{{ f["PRODUCTO"] }}</td>
-            <td>{{ f["CANTIDAD"] }}</td>
-            <td>{{ f["PRECIO"] }}</td>
+            <td>{{ farma[f][0] }}</td>
+            <td>{{ farma[f][1] }}</td>
+            <td>{{ farma[f][2] }}</td>
+            <td>{{ farma[f][3] }}</td>
+            <td>{{ farma[f][4] }}</td>
             
            
           </tr>

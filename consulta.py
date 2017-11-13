@@ -1,4 +1,17 @@
 import csv
+def orden(archi):
+    with open(archi,'r', encoding='latin-1') as archivo:
+        archi_csv = csv.reader(archivo)
+        orden = list(archi_csv)
+        orden2 = 0
+        
+        for rs in orden:
+            orden2 = rs
+            break
+        
+
+        return orden2
+
 def Todo(archicsv):
     with open(archicsv,'r', encoding='latin-1') as archivo:
         archivo_csv = csv.DictReader(archivo)
@@ -95,5 +108,10 @@ def busquedacliente(archicsv,segmen):
 
         return resultado
             
+def Todoventa(archicsv):
+    with open(archicsv,'r', encoding='latin-1') as archivo:
+        archivo_csv = csv.reader(archivo)        
+        farmase = list(archivo_csv) 
         
+        return farmase        
     

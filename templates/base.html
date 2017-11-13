@@ -22,13 +22,21 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Inicio</a></li>                
-                <li><a href="/ingresar">Ingresar</a></li>
-                <li><a href="/registrar">Registrarse</a></li>
+                <li><a href="/">Inicio</a></li> 
+            {% if 'username' in session %} 
+                <li><a href="/logout">salir</a></li>
+                <li><a href="/ventas">ventas</a></li>
                 <li><a href="/busqueda">producto</a></li>
                 <li><a href="/busquedacliente">cliente</a></li>                
                 <li><a href="/mayorpostor">mejor cliente</a></li>
-                <li><a href="/mejorproducto">mejor producto</a></li>
+                <li><a href="/mejorproducto">mejor producto</a></li>  
+            {% else %}            
+                <li><a href="/ingresar">Ingresar</a></li>
+            
+                <li><a href="/registrar">Registrarse</a></li>
+           
+                
+            {% endif %}
             </ul>
         </div>
     </div>

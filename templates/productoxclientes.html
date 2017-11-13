@@ -8,22 +8,22 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Cliente</th>
-        <th>Codigo</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Precio</th>
+        <th>{{ orden[0] }}</th>
+        <th>{{ orden[1] }}</th>
+        <th>{{ orden[2] }}</th>
+        <th>{{ orden[3] }}</th>
+        <th>{{ orden[4] }}</th>
       </tr>
     </thead>
     <tbody>{{ producto }}
     {% for j in farma %}
         {% if producto == j["PRODUCTO"] %}
           <tr>
-            <td>{{ j["CLIENTE"] }}</td>
-            <td>{{ j["CODIGO"] }}</td>
-            <td>{{ j["PRODUCTO"] }}</td>
-            <td>{{ j["CANTIDAD"] }}</td>
-            <td>{{ j["PRECIO"] }}</td>       
+            <td>{{ j[orden[0]] }}</td>
+            <td>{{ j[orden[1]] }}</td>
+            <td>{{ j[orden[2]] }}</td>
+            <td>{{ j[orden[3]] }}</td>
+            <td>{{ j[orden[4]] }}</td>      
           </tr>
         {% endif %}
     {% endfor %}

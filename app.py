@@ -17,7 +17,8 @@ app.config['SECRET_KEY'] = 'un string que funcione como llave'
 
 @app.route('/')
 def index():
-    return render_template('index.html', fecha_actual=datetime.utcnow())
+    
+    return render_template('index.html', fecha_actual=datetime.utcnow(),)
 
 
 
@@ -31,21 +32,24 @@ def error_interno(e):
 
 @app.route('/ingresar', methods=['GET', 'POST'])
 def ingresar():
-    formulario = LoginForm()
-    if formulario.validate_on_submit():
-        with open('usuarios') as archivo:
-            archivo_csv = csv.reader(archivo)
-            registro = next(archivo_csv)
-            while registro:
-                if formulario.usuario.data == registro[0] and formulario.password.data == registro[1]:
-                    flash('Bienvenido')
-                    session['username'] = formulario.usuario.data
-                    return render_template('ingresado.html')
-                registro = next(archivo_csv, None)
-            else:
-                flash('Revisá nombre de usuario y contraseña')
-                return redirect(url_for('ingresar'))
-    return render_template('login.html', formulario=formulario)
+    if 'username' in session:
+        return render_template('private.html', username=session['username'])
+    else:
+        formulario = LoginForm()
+        if formulario.validate_on_submit():
+            with open('usuarios') as archivo:
+                archivo_csv = csv.reader(archivo)
+                registro = next(archivo_csv)
+                while registro:
+                    if formulario.usuario.data == registro[0] and formulario.password.data == registro[1]:
+                        flash('Bienvenido')
+                        session['username'] = formulario.usuario.data
+                        return redirect(url_for('ventas'))
+                    registro = next(archivo_csv, None)
+                else:
+                    flash('Revisá nombre de usuario y contraseña')
+                    return redirect(url_for('ingresar'))
+        return render_template('login.html', formulario=formulario)
 
 
 @app.route('/registrar', methods=['GET', 'POST'])
@@ -81,60 +85,90 @@ def logout():
 
 @app.route('/ventas', methods=['GET', 'POST'])
 def ventas():
-    farmas = consulta.Todo("farmacia",)
-          
-    return render_template('ventas.html',farma = farmas)
+    if 'username' in session:
+        orden = consulta.orden('farmacia')
+        farmas = consulta.Todoventa("farmacia",)
+        listainversa = []
+        for z in farmas[-5:]:
+            listainversa.append(z)
+        return render_template('ventas.html',farma = listainversa,orden = orden)
+    else:
+        return render_template('sin_permiso.html')
 
 
 
 @app.route('/clientesxproducto/<cliente>')
 def clientesxproducto(cliente):
-    farmas = consulta.Todo("farmacia",)
-    return render_template('clientesxproducto.html', cliente=cliente, farma=farmas)
-
+    if 'username' in session:
+        orden = consulta.orden('farmacia')
+        farmas = consulta.Todo("farmacia",)
+        return render_template('clientesxproducto.html', cliente=cliente, farma=farmas,orden=orden)
+    else:
+        return render_template('sin_permiso.html')
 
 
 @app.route('/productoxclientes/<producto>')
 def productoxclientes(producto):
-    farmas = consulta.Todo("farmacia",)
-    return render_template('productoxclientes.html', producto=producto, farma=farmas)
+    if 'username' in session:
+        orden = consulta.orden('farmacia')
+        farmas = consulta.Todo("farmacia",)
+        return render_template('productoxclientes.html', producto=producto, farma=farmas,orden=orden)
+    else:
+        return render_template('sin_permiso.html')
 
 @app.route('/mayorpostor')
 def mayorpostor():
-    farmas = consulta.mayorganancia("farmacia",)
-    return render_template('mayorpostor.html', farma=farmas)
+    if 'username' in session:
+        farmas = consulta.mayorganancia("farmacia",)
+        return render_template('mayorpostor.html', farma=farmas)
+    else:
+        return render_template('sin_permiso.html')
 
 @app.route('/mejorproducto')
 def mejorproducto():
-    farmas = consulta.mejorproducto("farmacia",)
-    return render_template('mejorproducto.html', farma=farmas)
+    if 'username' in session:
+        farmas = consulta.mejorproducto("farmacia",)
+        return render_template('mejorproducto.html', farma=farmas)
+    else:
+        return render_template('sin_permiso.html')
 
 @app.route('/busqueda/<segmen>')
 def busqueda(segmen):
-    farmas = consulta.busqueda("farmacia",segmen,)
-    return render_template('busqueda.html', farma=farmas)
+    if 'username' in session:
+        farmas = consulta.busqueda("farmacia",segmen,)
+        return render_template('busqueda.html', farma=farmas)
+    else:
+        return render_template('sin_permiso.html')
 
 @app.route('/busqueda', methods=['GET', 'POST'])
 def saludar():
-    formulario = ListarForm()
-    if formulario.validate_on_submit():
-        print(formulario.usuario.name)
-        return redirect(url_for('busqueda', segmen=formulario.usuario.data))
-    return render_template('usuarios.html', form=formulario)
+    if 'username' in session:
+        formulario = ListarForm()
+        if formulario.validate_on_submit():
+            print(formulario.usuario.name)
+            return redirect(url_for('busqueda', segmen=formulario.usuario.data))
+        return render_template('usuarios.html', form=formulario)
+    else:
+        return render_template('sin_permiso.html')
 
 @app.route('/busquedacliente/<segmen>')
 def busquedacliente(segmen):
-    farmas = consulta.busquedacliente("farmacia",segmen,)
-    return render_template('busquedacliente.html', farma=farmas)
+    if 'username' in session:
+        farmas = consulta.busquedacliente("farmacia",segmen,)
+        return render_template('busquedacliente.html', farma=farmas)
+    else:
+        return render_template('sin_permiso.html')
 
 @app.route('/busquedacliente', methods=['GET', 'POST'])
 def saludart():
-    formulario = ListarForm()
-    if formulario.validate_on_submit():
-        print(formulario.usuario.name)
-        return redirect(url_for('busquedacliente', segmen=formulario.usuario.data))
-    return render_template('usuarios.html', form=formulario)
-
+    if 'username' in session:
+        formulario = ListarForm()
+        if formulario.validate_on_submit():
+            print(formulario.usuario.name)
+            return redirect(url_for('busquedacliente', segmen=formulario.usuario.data))
+        return render_template('usuarios.html', form=formulario)
+    else:
+        return render_template('sin_permiso.html')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
