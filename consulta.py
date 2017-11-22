@@ -1,4 +1,31 @@
 import csv
+import os.path
+from error import errorja
+
+def orden2(archi):
+    feo = False
+    if os.path.isfile(archi):
+        feo = True
+    return feo
+def orden3(arch):
+    with open(arch,'r', encoding='latin-1') as archivo:
+        archivo_csv = csv.DictReader(archivo)
+        #farmase = []
+        farmase = list(archivo_csv) 
+        for zaraza in farmase:
+            if len(zaraza) != 5:
+                raise errorja
+            if type(zaraza["CANTIDAD"]) != int:
+                    raise errorja
+            if type(float(zaraza["PRECIO"])) != float:
+                    raise errorja
+            for campete in zaraza:
+                if campete is None or '':
+                    raise errorja
+        return farmase
+                
+
+
 def orden(archi):
     with open(archi,'r', encoding='latin-1') as archivo:
         archi_csv = csv.reader(archivo)
@@ -8,9 +35,8 @@ def orden(archi):
         for rs in orden:
             orden2 = rs
             break
-        
-
         return orden2
+       
 
 def Todo(archicsv):
     with open(archicsv,'r', encoding='latin-1') as archivo:

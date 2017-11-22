@@ -7,6 +7,7 @@ from flask_moment import Moment
 from flask_script import Manager
 from forms import LoginForm, ListarForm, RegistrarForm
 import consulta 
+from error import errorja
 
 app = Flask(__name__)
 manager = Manager(app)
@@ -21,6 +22,17 @@ def index():
     return render_template('index.html', fecha_actual=datetime.utcnow(),)
 
 
+@app.route('/error')
+def errores():
+    
+        orden = consulta.orden3('farmacia')
+        '''if orden:
+            raise errorja('si archivo')
+            
+        else:
+            raise errorja('no archivo')
+    except errorja as e:'''
+        return render_template('error.html',error = orden)
 
 @app.errorhandler(404)
 def no_encontrado(e):
