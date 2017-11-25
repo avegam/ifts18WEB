@@ -5,7 +5,7 @@ from flask import Flask, render_template, redirect, url_for, flash, session
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_script import Manager
-from forms import LoginForm, ListarForm, RegistrarForm
+from forms import LoginForm, ListarForm, RegistrarForm,CambioPassForm
 import consulta 
 from error import errorja
 
@@ -69,6 +69,13 @@ def registrar():
     formulario = RegistrarForm()
     if formulario.validate_on_submit():
         if formulario.password.data == formulario.password_check.data:
+            with open ('usuarios', 'r+') as archi:
+                archileer = csv.reader(archi)
+                leerusuarios = list(archileer)
+                for z in range(len(leerusuarios)):
+                    if leerusuarios[z][0] == formulario.usuario.data:
+                        flash('nombre de usuario ya estea usado')
+                        return render_template('registrar.html', form=formulario)
             with open('usuarios', 'a+') as archivo:
                 archivo_csv = csv.writer(archivo)
                 registro = [formulario.usuario.data, formulario.password.data]
@@ -79,6 +86,25 @@ def registrar():
             flash('Las passwords no matchean')
     return render_template('registrar.html', form=formulario)
 
+@app.route('/cambiocontras', methods=['GET', 'POST'])
+def cambiocon():
+    formulario = CambioPassForm()
+    if formulario.validate_on_submit():
+        if formulario.password.data == formulario.password_check.data:
+            with open ('usuarios', 'r+') as archi:
+                archileer = csv.reader(archi)
+                leerusuarios = list(archileer)
+                for z in range(len(leerusuarios)):
+                    if leerusuarios[z][0] == formulario.usuario.data and leerusuarios[z][1] == formulario.passwordvieja.data:
+                        leerusuarios[z][1] = formulario.password.data
+                        with open ('usuarios', 'w') as csvcorregido:
+                            nuevousuarios = csv.writer(csvcorregido)
+                            nuevousuarios.writerows(leerusuarios)
+                        flash('su contrasena se cambio correctamente')
+                        return redirect(url_for('ingresar'))
+                flash('Revisá nombre de usuario y contraseña')
+        flash('las contraseñas no coinciden')
+    return render_template('cambiopass.html', form=formulario)
 
 @app.route('/secret', methods=['GET'])
 def secreto():
@@ -114,6 +140,8 @@ def clientesxproducto(cliente):
     if 'username' in session:
         orden = consulta.orden('farmacia')
         farmas = consulta.Todo("farmacia",)
+        sobre = "CLIENTE"
+        consulta.exportar(farmas,orden,cliente,sobre)
         return render_template('clientesxproducto.html', cliente=cliente, farma=farmas,orden=orden)
     else:
         return render_template('sin_permiso.html')
@@ -124,6 +152,8 @@ def productoxclientes(producto):
     if 'username' in session:
         orden = consulta.orden('farmacia')
         farmas = consulta.Todo("farmacia",)
+        sobre = "PRODUCTO"
+        consulta.exportar(farmas,orden,producto,sobre)
         return render_template('productoxclientes.html', producto=producto, farma=farmas,orden=orden)
     else:
         return render_template('sin_permiso.html')
@@ -132,6 +162,8 @@ def productoxclientes(producto):
 def mayorpostor():
     if 'username' in session:
         farmas = consulta.mayorganancia("farmacia",)
+        sobre = "MEJORESCLIENTES"
+        consulta.exportardinero(farmas,sobre)
         return render_template('mayorpostor.html', farma=farmas)
     else:
         return render_template('sin_permiso.html')
@@ -140,6 +172,8 @@ def mayorpostor():
 def mejorproducto():
     if 'username' in session:
         farmas = consulta.mejorproducto("farmacia",)
+        sobre = "MEJORESPRODUCTOS"
+        consulta.exportarmejor(farmas,sobre)
         return render_template('mejorproducto.html', farma=farmas)
     else:
         return render_template('sin_permiso.html')

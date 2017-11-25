@@ -1,6 +1,36 @@
 import csv
 import os.path
+from datetime import datetime
 from error import errorja
+
+def exportar(resultados,orden,busqueda,sobre):
+    nombre = datetime.now().strftime('resultado_%Y%m%d_%H%M%S')
+    with open ('resultado/' + sobre + "/" + nombre + ".csv", 'a+') as csvcorregido:
+        csvcorregido.write("resultado de la busqueda de todos movientos del " + sobre + " " + busqueda + '\n')
+        fieldnames = orden
+        nuevousuarios = csv.DictWriter(csvcorregido,fieldnames=fieldnames) 
+        nuevousuarios.writeheader()        
+        for resul in resultados:
+            if busqueda == resul[sobre]:
+                nuevousuarios.writerow(resul)
+
+def exportardinero(resultado,sobre):
+    nombre = datetime.now().strftime('resultado_%Y%m%d_%H%M%S')
+    with open ('resultado/' + sobre + "/" + nombre + ".csv", 'a+') as csvcorregido:
+        csvcorregido.write("Listado de clientes que gastaron mas dinero ordenados de mayor a menor" + '\n')
+        exportar = csv.writer(csvcorregido)
+        exportar.writerow(['Cliente','Dinero'])
+        for j in range(len(resultado)):
+            exportar.writerow([resultado[j][0],round(resultado[j][1],2)])
+
+def exportarmejor(resultado,sobre):
+    nombre = datetime.now().strftime('resultado_%Y%m%d_%H%M%S')
+    with open ('resultado/' + sobre + "/" + nombre + ".csv", 'a+') as csvcorregido:
+        csvcorregido.write("Listado de productos que mas cantidades compraron ordenados de mayor a menor" + '\n')
+        exportar = csv.writer(csvcorregido)
+        exportar.writerow(['Producto','Codigo',"Cantidad"])
+        for j in range(len(resultado)):
+            exportar.writerow([resultado[j][0],resultado[j][1],resultado[j][2]])
 
 def orden2(archi):
     feo = False
@@ -8,21 +38,23 @@ def orden2(archi):
         feo = True
     return feo
 def orden3(arch):
-    with open(arch,'r', encoding='latin-1') as archivo:
-        archivo_csv = csv.DictReader(archivo)
-        #farmase = []
-        farmase = list(archivo_csv) 
+    try:
+        with open(arch,'r', encoding='latin-1') as archivo:    
+            archivo_csv = csv.DictReader(archivo)
+            farmase = list(archivo_csv)
+    except FileNotFoundError as TT:
+        raise errorja("asd") from TT 
         for zaraza in farmase:
             if len(zaraza) != 5:
                 raise errorja
-            if type(zaraza["CANTIDAD"]) != int:
-                    raise errorja
-            if type(float(zaraza["PRECIO"])) != float:
-                    raise errorja
+            if not isinstance(int(float(zaraza["CANTIDAD"])),int):
+                raise errorja('no es int')
+            if not isinstance(float(zaraza["PRECIO"]),float):
+                raise errorja('no es decimal')
             for campete in zaraza:
                 if campete is None or '':
                     raise errorja
-        return farmase
+    return farmase
                 
 
 
