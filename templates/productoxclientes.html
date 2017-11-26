@@ -1,8 +1,12 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block title %}{% endblock %}
 
 {% block page_content %}
 <div class="container">
+<div class="page-header">
+    {{ wtf.quick_form(form) }}
+</div>
  
   <p></p>            
   <table class="table table-striped">
@@ -16,7 +20,7 @@
       </tr>
     </thead>
     <tbody>{{ producto }}
-    {% for j in farma %}
+    {% for j in listadict %}
         {% if producto == j["PRODUCTO"] %}
           <tr>
             <td>{{ j[orden[0]] }}</td>

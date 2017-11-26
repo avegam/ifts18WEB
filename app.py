@@ -25,13 +25,7 @@ def index():
 @app.route('/error')
 def errores():
     
-        orden = consulta.orden3('farmacia')
-        '''if orden:
-            raise errorja('si archivo')
-            
-        else:
-            raise errorja('no archivo')
-    except errorja as e:'''
+        orden = consulta.validar_csv('farmacia')        
         return render_template('error.html',error = orden)
 
 @app.errorhandler(404)
@@ -69,15 +63,15 @@ def registrar():
     formulario = RegistrarForm()
     if formulario.validate_on_submit():
         if formulario.password.data == formulario.password_check.data:
-            with open ('usuarios', 'r+') as archi:
-                archileer = csv.reader(archi)
+            with open ('usuarios', 'r+') as archivo:
+                archileer = csv.reader(archivo)
                 leerusuarios = list(archileer)
                 for z in range(len(leerusuarios)):
                     if leerusuarios[z][0] == formulario.usuario.data:
-                        flash('nombre de usuario ya estea usado')
+                        flash('nombre de usuario ya esta usado')
                         return render_template('registrar.html', form=formulario)
-            with open('usuarios', 'a+') as archivo:
-                archivo_csv = csv.writer(archivo)
+            with open('usuarios', 'a+') as archivo2:
+                archivo_csv = csv.writer(archivo2)
                 registro = [formulario.usuario.data, formulario.password.data]
                 archivo_csv.writerow(registro)
             flash('Usuario creado correctamente')
@@ -91,8 +85,8 @@ def cambiocon():
     formulario = CambioPassForm()
     if formulario.validate_on_submit():
         if formulario.password.data == formulario.password_check.data:
-            with open ('usuarios', 'r+') as archi:
-                archileer = csv.reader(archi)
+            with open ('usuarios', 'r+') as archivo:
+                archileer = csv.reader(archivo)
                 leerusuarios = list(archileer)
                 for z in range(len(leerusuarios)):
                     if leerusuarios[z][0] == formulario.usuario.data and leerusuarios[z][1] == formulario.passwordvieja.data:
@@ -124,65 +118,83 @@ def logout():
 @app.route('/ventas', methods=['GET', 'POST'])
 def ventas():
     if 'username' in session:
-        orden = consulta.orden('farmacia')
-        farmas = consulta.Todoventa("farmacia",)
+        leer_csv = consulta.leer_csv('farmacia')
+        orden = consulta.orden(leer_csv)
         listainversa = []
-        for z in farmas[-5:]:
+        for z in leer_csv[-5:]:
             listainversa.append(z)
-        return render_template('ventas.html',farma = listainversa,orden = orden)
+        return render_template('ventas.html',ultimas_ventas = listainversa,orden = orden)
     else:
         return render_template('sin_permiso.html')
 
 
 
-@app.route('/clientesxproducto/<cliente>')
-def clientesxproducto(cliente):
-    if 'username' in session:
-        orden = consulta.orden('farmacia')
-        farmas = consulta.Todo("farmacia",)
-        sobre = "CLIENTE"
-        consulta.exportar(farmas,orden,cliente,sobre)
-        return render_template('clientesxproducto.html', cliente=cliente, farma=farmas,orden=orden)
-    else:
-        return render_template('sin_permiso.html')
 
 
-@app.route('/productoxclientes/<producto>')
-def productoxclientes(producto):
-    if 'username' in session:
-        orden = consulta.orden('farmacia')
-        farmas = consulta.Todo("farmacia",)
-        sobre = "PRODUCTO"
-        consulta.exportar(farmas,orden,producto,sobre)
-        return render_template('productoxclientes.html', producto=producto, farma=farmas,orden=orden)
-    else:
-        return render_template('sin_permiso.html')
 
-@app.route('/mayorpostor')
-def mayorpostor():
+
+
+@app.route('/mejorcliente')
+def mejoresclientes():
     if 'username' in session:
-        farmas = consulta.mayorganancia("farmacia",)
+        listadict = consulta.leer_csv_dict("farmacia")
+        matriz_clientes_dinero = consulta.mejoresclientes(listadict)
         sobre = "MEJORESCLIENTES"
-        consulta.exportardinero(farmas,sobre)
-        return render_template('mayorpostor.html', farma=farmas)
+        consulta.exportardinero(matriz_clientes_dinero,sobre)
+        return render_template('mejoresclientes.html', matriz=matriz_clientes_dinero)
     else:
         return render_template('sin_permiso.html')
 
 @app.route('/mejorproducto')
 def mejorproducto():
     if 'username' in session:
-        farmas = consulta.mejorproducto("farmacia",)
+        listadict = consulta.leer_csv_dict("farmacia")
+        matriz_producto_codigo_cantidad = consulta.mejorproducto(listadict)
         sobre = "MEJORESPRODUCTOS"
-        consulta.exportarmejor(farmas,sobre)
-        return render_template('mejorproducto.html', farma=farmas)
+        consulta.exportarmejor(matriz_producto_codigo_cantidad,sobre)
+        return render_template('mejorproducto.html', matriz=matriz_producto_codigo_cantidad)
+    else:
+        return render_template('sin_permiso.html')
+
+@app.route('/productoxclientes/<producto>', methods=['GET', 'POST'])
+def productoxclientes(producto):
+    if 'username' in session:        
+        formulario = ListarForm()
+        if formulario.validate_on_submit():
+            return redirect(url_for('busqueda', segmen=formulario.usuario.data))       
+        leer_csv = consulta.leer_csv('farmacia')
+        orden = consulta.orden(leer_csv)
+        listadict = consulta.leer_csv_dict("farmacia")
+        sobre = "PRODUCTO"
+        consulta.exportar(listadict,orden,producto,sobre)
+        return render_template('productoxclientes.html', producto=producto, listadict=listadict,orden=orden,form=formulario)
     else:
         return render_template('sin_permiso.html')
 
 @app.route('/busqueda/<segmen>')
 def busqueda(segmen):
     if 'username' in session:
-        farmas = consulta.busqueda("farmacia",segmen,)
-        return render_template('busqueda.html', farma=farmas)
+        parte_buscadora = segmen.upper()
+        leer_csv_dict = consulta.leer_csv_dict("farmacia")
+        lista_resultado = consulta.busqueda(leer_csv_dict,parte_buscadora)
+        if len(lista_resultado) == 1:
+            return redirect(url_for('productoxclientes', producto = lista_resultado[0]))
+        return render_template('busqueda.html', resultado=lista_resultado)
+    else:
+        return render_template('sin_permiso.html')
+
+@app.route('/clientesxproducto/<cliente>',methods=['GET', 'POST'])
+def clientesxproducto(cliente):
+    if 'username' in session:
+        formulario = ListarForm()
+        if formulario.validate_on_submit():
+            return redirect(url_for('busquedacliente', segmen=formulario.usuario.data))
+        leer_csv = consulta.leer_csv('farmacia')
+        orden = consulta.orden(leer_csv)
+        listadict = consulta.leer_csv_dict("farmacia",)
+        sobre = "CLIENTE"
+        consulta.exportar(listadict,orden,cliente,sobre)
+        return render_template('clientesxproducto.html', cliente=cliente, listadict=listadict,orden=orden ,form=formulario)
     else:
         return render_template('sin_permiso.html')
 
@@ -200,8 +212,12 @@ def saludar():
 @app.route('/busquedacliente/<segmen>')
 def busquedacliente(segmen):
     if 'username' in session:
-        farmas = consulta.busquedacliente("farmacia",segmen,)
-        return render_template('busquedacliente.html', farma=farmas)
+        parte_buscadora = segmen.upper()
+        leer_csv_dict = consulta.leer_csv_dict("farmacia")
+        lista_resultado = consulta.busquedacliente(leer_csv_dict,parte_buscadora)
+        if len(lista_resultado) == 1:
+            return redirect(url_for('clientesxproducto', cliente = lista_resultado[0]))        
+        return render_template('busquedacliente.html', resultado=lista_resultado)
     else:
         return render_template('sin_permiso.html')
 

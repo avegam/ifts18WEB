@@ -11,7 +11,7 @@ class LoginForm(FlaskForm):
 
 class ListarForm(FlaskForm):
     usuario = StringField('Nombre: ', validators=[Required()])
-    enviar = SubmitField('listar')
+    enviar = SubmitField('buscar')
 
 
 class RegistrarForm(LoginForm):
