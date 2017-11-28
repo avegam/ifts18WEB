@@ -179,6 +179,8 @@ def busqueda(segmen):
         lista_resultado = consulta.busqueda(leer_csv_dict,parte_buscadora)
         if len(lista_resultado) == 1:
             return redirect(url_for('productoxclientes', producto = lista_resultado[0]))
+        if not lista_resultado:
+            flash('no se encontro ' + parte_buscadora)
         return render_template('busqueda.html', resultado=lista_resultado)
     else:
         return render_template('sin_permiso.html')
@@ -216,7 +218,9 @@ def busquedacliente(segmen):
         leer_csv_dict = consulta.leer_csv_dict("farmacia")
         lista_resultado = consulta.busquedacliente(leer_csv_dict,parte_buscadora)
         if len(lista_resultado) == 1:
-            return redirect(url_for('clientesxproducto', cliente = lista_resultado[0]))        
+            return redirect(url_for('clientesxproducto', cliente = lista_resultado[0]))
+        if not lista_resultado:
+            flash('no se encontro ' + parte_buscadora)
         return render_template('busquedacliente.html', resultado=lista_resultado)
     else:
         return render_template('sin_permiso.html')
