@@ -72,7 +72,7 @@ def exportardinero(resultado,sobre):
     nombre = datetime.now().strftime('resultado_%Y%m%d_%H%M%S')
     with open ('resultado/' + sobre + "/" + nombre + ".csv", 'a+') as nuevo_csv:
         nuevo_csv.write("Listado de clientes que gastaron mas dinero ordenados de mayor a menor" + '\n')
-        exportar = csv.writer(nuevo_csv)
+        exportar = csv.writer(nuevo_csv,delimiter=',')
         exportar.writerow(['Cliente','Dinero'])
         for j in range(len(resultado)):
             exportar.writerow([resultado[j][0],round(resultado[j][1],2)])
@@ -106,7 +106,7 @@ def exportarmejor(resultado,sobre):
     nombre = datetime.now().strftime('resultado_%Y%m%d_%H%M%S')
     with open ('resultado/' + sobre + "/" + nombre + ".csv", 'a+') as nuevo_csv:
         nuevo_csv.write("Listado de productos que mas cantidades compraron ordenados de mayor a menor" + '\n')
-        exportar = csv.writer(nuevo_csv)
+        exportar = csv.writer(nuevo_csv,delimiter=',')
         exportar.writerow(['Producto','Codigo',"Cantidad"])
         for j in range(len(resultado)):
             exportar.writerow([resultado[j][0],resultado[j][1],resultado[j][2]])
@@ -153,7 +153,7 @@ def exportar(resultados,orden,busqueda,sobre):
     with open ('resultado/' + sobre + "/" + nombre + ".csv", 'a+') as nuevo_csv:
         nuevo_csv.write("resultado de la busqueda de todos movientos del " + sobre + " " + busqueda + '\n')
         fieldnames = orden
-        csv_resultado = csv.DictWriter(nuevo_csv,fieldnames=fieldnames) 
+        csv_resultado = csv.DictWriter(nuevo_csv,fieldnames=fieldnames,delimiter=',') 
         csv_resultado.writeheader()        
         for h in resultados:
             if busqueda == h[sobre]:
