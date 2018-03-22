@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import csv
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session,send_file
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_script import Manager
@@ -20,6 +20,13 @@ app.config['SECRET_KEY'] = 'un string que funcione como llave'
 def index():
     
     return render_template('index.html', fecha_actual=datetime.utcnow(),)
+
+
+
+@app.route('/descarga/<sobre>/<archivo>')
+def return_files(sobre,archivo):
+    direccion = 'resultado/' + sobre + '/' + archivo      
+    return send_file(direccion,as_attachment=True)
 
 
 @app.route('/error')
@@ -105,7 +112,8 @@ def secreto():
     if 'username' in session:
         return render_template('private.html', username=session['username'])
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 @app.route('/logout', methods=['GET'])
 def logout():
@@ -125,7 +133,8 @@ def ventas():
             listainversa.append(z)
         return render_template('ventas.html',ultimas_ventas = listainversa,orden = orden)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 
 
@@ -140,10 +149,11 @@ def mejoresclientes():
         listadict = consulta.leer_csv_dict("farmacia")
         matriz_clientes_dinero = consulta.mejoresclientes(listadict)
         sobre = "MEJORESCLIENTES"
-        consulta.exportardinero(matriz_clientes_dinero,sobre)
-        return render_template('mejoresclientes.html', matriz=matriz_clientes_dinero)
+        nombre = consulta.exportardinero(matriz_clientes_dinero,sobre)
+        return render_template('mejoresclientes.html', matriz=matriz_clientes_dinero,nombre=nombre)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 @app.route('/mejorproducto')
 def mejorproducto():
@@ -151,10 +161,11 @@ def mejorproducto():
         listadict = consulta.leer_csv_dict("farmacia")
         matriz_producto_codigo_cantidad = consulta.mejorproducto(listadict)
         sobre = "MEJORESPRODUCTOS"
-        consulta.exportarmejor(matriz_producto_codigo_cantidad,sobre)
-        return render_template('mejorproducto.html', matriz=matriz_producto_codigo_cantidad)
+        nombre = consulta.exportarmejor(matriz_producto_codigo_cantidad,sobre)
+        return render_template('mejorproducto.html', matriz=matriz_producto_codigo_cantidad,nombre=nombre)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 @app.route('/productoxclientes/<producto>', methods=['GET', 'POST'])
 def productoxclientes(producto):
@@ -166,10 +177,11 @@ def productoxclientes(producto):
         orden = consulta.orden(leer_csv)
         listadict = consulta.leer_csv_dict("farmacia")
         sobre = "PRODUCTO"
-        consulta.exportar(listadict,orden,producto,sobre)
-        return render_template('productoxclientes.html', producto=producto, listadict=listadict,orden=orden,form=formulario)
+        nombre = consulta.exportar(listadict,orden,producto,sobre)
+        return render_template('productoxclientes.html', producto=producto, listadict=listadict,orden=orden,form=formulario,nombre=nombre)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 @app.route('/busqueda/<segmen>')
 def busqueda(segmen):
@@ -183,7 +195,8 @@ def busqueda(segmen):
             flash('no se encontro ' + parte_buscadora)
         return render_template('busqueda.html', resultado=lista_resultado)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 @app.route('/clientesxproducto/<cliente>',methods=['GET', 'POST'])
 def clientesxproducto(cliente):
@@ -195,10 +208,11 @@ def clientesxproducto(cliente):
         orden = consulta.orden(leer_csv)
         listadict = consulta.leer_csv_dict("farmacia",)
         sobre = "CLIENTE"
-        consulta.exportar(listadict,orden,cliente,sobre)
-        return render_template('clientesxproducto.html', cliente=cliente, listadict=listadict,orden=orden ,form=formulario)
+        nombre = consulta.exportar(listadict,orden,cliente,sobre)
+        return render_template('clientesxproducto.html', cliente=cliente, listadict=listadict,orden=orden ,form=formulario, nombre=nombre)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 @app.route('/busqueda', methods=['GET', 'POST'])
 def saludar():
@@ -209,7 +223,8 @@ def saludar():
             return redirect(url_for('busqueda', segmen=formulario.usuario.data))
         return render_template('usuarios.html', form=formulario)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 @app.route('/busquedacliente/<segmen>')
 def busquedacliente(segmen):
@@ -223,7 +238,8 @@ def busquedacliente(segmen):
             flash('no se encontro ' + parte_buscadora)
         return render_template('busquedacliente.html', resultado=lista_resultado)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 @app.route('/busquedacliente', methods=['GET', 'POST'])
 def saludart():
@@ -234,7 +250,8 @@ def saludart():
             return redirect(url_for('busquedacliente', segmen=formulario.usuario.data))
         return render_template('usuarios.html', form=formulario)
     else:
-        return render_template('sin_permiso.html')
+        flash('no tenes permisos')
+        return redirect(url_for('ingresar'))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

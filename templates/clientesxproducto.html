@@ -18,7 +18,8 @@
         <th>{{ orden[4] }}</th>
       </tr>
     </thead>
-    <tbody>{{ cliente }}
+    <tbody>Busqueda por cliente: {{ cliente }}
+<a href="/descarga/CLIENTE/{{ nombre }}.csv" target="blank"><button class='btn btn-default'>descarga</button></a>
     {% for j in listadict %}
         {% if cliente == j["CLIENTE"] %}
           <tr>

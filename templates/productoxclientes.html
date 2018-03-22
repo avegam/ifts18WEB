@@ -19,7 +19,8 @@
         <th>{{ orden[4] }}</th>
       </tr>
     </thead>
-    <tbody>{{ producto }}
+    <tbody>Busqueda por Producto: {{ producto }}
+<a href="/descarga/PRODUCTO/{{ nombre }}.csv" target="blank"><button class='btn btn-default'>descarga</button></a>
     {% for j in listadict %}
         {% if producto == j["PRODUCTO"] %}
           <tr>

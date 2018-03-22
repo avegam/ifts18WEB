@@ -20,7 +20,7 @@ def validar_csv(archivocsv):
             archivo_csv = csv.DictReader(archivo)
             leer_csv_dict = list(archivo_csv)
     except FileNotFoundError as TT:
-        raise errorja("asd") from TT 
+        raise errorja("archivo csv no encontrado") from TT 
         for linea in leer_csv_dict:
             if len(linea) != 5:
                 raise errorja('cantidad de campos incorrecta')
@@ -76,6 +76,7 @@ def exportardinero(resultado,sobre):
         exportar.writerow(['Cliente','Dinero'])
         for j in range(len(resultado)):
             exportar.writerow([resultado[j][0],round(resultado[j][1],2)])
+        return nombre
 
 def mejorproducto(listadict):
         listado_productos = []
@@ -109,6 +110,7 @@ def exportarmejor(resultado,sobre):
         exportar.writerow(['Producto','Codigo',"Cantidad"])
         for j in range(len(resultado)):
             exportar.writerow([resultado[j][0],resultado[j][1],resultado[j][2]])
+        return nombre
 
 def busqueda(listadict,segmento):
         listado_productos = []
@@ -156,6 +158,30 @@ def exportar(resultados,orden,busqueda,sobre):
         for h in resultados:
             if busqueda == h[sobre]:
                 csv_resultado.writerow(h)
+        return nombre
+
+#def exportar(resultados,orden,busqueda,sobre):
+#    nombre = datetime.now().strftime('resultado_%Y%m%d_%H%M%S')
+#    with open ('resultado/' + sobre + "/" + nombre + ".csv", 'w')
+#        columnTitleRow = 'CLIENTE, CODIGO, PRODUCTO, CANTIDAD, PRECIO\n'
+#        csv.write(columnTitleRow)              
+#        for key in resultados.key:
+#            CLIENTE =
+#            CODIGO =
+#            PRODUCTO =
+#            CANTIDAD =
+#            PRECIO =
+
+#def exportar(resultados,orden,busqueda,sobre):
+#    nombre = datetime.now().strftime('resultado_%Y%m%d_%H%M%S')
+#    with open ('resultado/' + sobre + "/" + nombre + ".csv", 'w') as nuevo_csv:
+#        fieldnames = orden
+#        csv_resultado = csv.DictWriter(nuevo_csv,fieldnames=fieldnames) 
+#        csv_resultado.writeheader()        
+#        for h in resultados:
+#            if busqueda == h[sobre]:
+#                csv_resultado.writerow(h)
+#        return nombre
             
        
     
